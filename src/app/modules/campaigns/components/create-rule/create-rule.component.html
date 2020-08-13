@@ -1,0 +1,80 @@
+<form [formGroup]="ruleForm" (ngSubmit)="addNewRule()">
+  <div class="create-rule-wrapper">
+    <div mat-dialog-title>New Rule</div>
+    <div class="controls-container">
+      <mat-form-field>
+        <input  matInput placeholder="Rule Name" formControlName="Name" required>
+        <mat-error *ngIf="nameField.hasError('required')">Rule Name is required</mat-error>
+        <mat-error *ngIf="!nameField.hasError('required') && nameField.hasError('whitespace')">Rule Name should not contain only spaces</mat-error>
+      </mat-form-field>
+    </div>
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <div class="rule-creation-table" mat-dialog-content>
+      <div class="rule-creation-table">
+        <table mat-table [dataSource]="formDataSource" formArrayName="RuleItems">
+          <!-- Row definitions -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; let i = index; columns: displayedColumns;"></tr>
+
+          <!-- Column definitions -->
+          <ng-container matColumnDef="parameter">
+            <th mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                (change)="masterToggle($event)"
+                [checked]="isAllSelected"
+              > Parameter </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row; let index = index; let element;"  [formGroupName]="index">
+              <mat-checkbox class="rule-name" formControlName="Checked">{{element.get('DataCutRuleFieldName').value}}</mat-checkbox>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="logic">
+            <th mat-header-cell *matHeaderCellDef> Logic </th>
+            <td mat-cell *matCellDef="let row; let index = index; let element;"  [formGroupName]="index">
+              <mat-form-field floatLabel="never">
+                <mat-select formControlName="DataCutLogicType" [compareWith]="compareObjects">
+                  <mat-option *ngFor="let option of element.get('LogicTypes').value" [value]="option">{{option.Name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef> Value </th>
+            <td mat-cell *matCellDef="let row; let index = index; let element;"  [formGroupName]="index">
+              <div class="form-field">
+                <mat-form-field floatLabel="never">
+                  <input *ngIf="element.get('DataCutLogicType').value?.FieldDataType === 'Numeric' || element.get('DataCutLogicType').value?.FieldDataType === 'Text'" matInput formControlName="Value" placeholder="Value" [type]="element.get('DataCutLogicType').value?.FieldDataType === 'Numeric' ? 'number': 'text'">
+
+                  <mat-select formControlName="Value" *ngIf="element.get('DataCutLogicType').value?.FieldDataType === 'ShortcutedLogicText'">
+                    <mat-option *ngFor="let option of ShortcutedLogicTextOptions" [value]="option.Id">{{option.Name}}</mat-option>
+                  </mat-select>
+
+
+                  <mat-select formControlName="Value" *ngIf="element.get('DataCutLogicType').value?.FieldDataType === 'GeneralLandUseCodes'">
+                    <mat-option *ngFor="let option of generalLandUseCodes" [value]="option.Id">{{option.Name}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <div class="mat-form-field-subscript-wrapper">
+                  <mat-error *ngIf="ruleFormSubmitted && ruleItems.at(index).errors && ruleItems.at(index).errors.selectedRowRequired">
+                    Value is required
+                  </mat-error>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+        </table>
+      </div>
+    </div>
+    <div class="controls-button-block" mat-dialog-actions>
+      <div class="mat-form-field-subscript-wrapper">
+        <mat-error *ngIf="ruleFormSubmitted && ruleForm.errors && ruleForm.errors.noRulesSelected">
+          Please select at least one parameter
+        </mat-error>
+      </div>
+      <button mat-raised-button mat-dialog-close type="button">Cancel</button>
+      <button mat-raised-button color="primary" type="submit">Create</button>
+    </div>
+  </div>
+</form>

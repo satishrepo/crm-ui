@@ -1,0 +1,28 @@
+<div class="root">
+  <div class="loader-shade"
+       *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+  <ng-content select=".table-instruction" *ngIf="contactsTotal !== 0 && !error"></ng-content>
+  <app-crm-data-table
+    *ngIf="contactsTotal !== 0 && !error"
+    [headerCols]="dataTableHeaders"
+    [dataSource]="data"
+    [totalCount]="contactsTotal"
+
+    [pageOptions]="pageOptions"
+    [sortOptions]="sortOptions"
+
+    (rowClick)="rowClickHandler($event)"
+    (fetchData)="updateDataTableParams($event)"
+    [loadOnInit]="false"
+  ></app-crm-data-table>
+
+  <div class="mat-subheading-1" align="center" *ngIf="contactsTotal === 0 && !error">
+    No Contacts Found
+  </div>
+
+  <div class="mat-subheading-1" align="center" *ngIf="error">
+    {{ error }}
+  </div>
+</div>

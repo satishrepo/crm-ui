@@ -1,0 +1,20 @@
+<div class="opportunity">
+    <app-full-search
+        class="search"
+        [headerCols]="searchHeaderCols"
+        [data]="opportunities"
+        [totalLength]="opportunitiesLength"
+        (getData)="getOpportunities($event)"
+        (selectItem)="selectOpportunity($event)"
+        [isLoading]="isLoadingOpportunities"
+        [title]="'Find Opportunities'">
+        <div class="controls">
+            <button mat-icon-button color="primary" matTooltip="Create New Opportunity" (click)="openCreateDialog()" type="button" *ngIf="permissionOpportunitiesCreate">
+                <mat-icon>note_add</mat-icon>
+            </button>
+        </div>
+    </app-full-search>
+    <div class="opportunity-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

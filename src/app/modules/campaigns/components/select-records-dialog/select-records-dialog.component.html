@@ -1,0 +1,107 @@
+<div class="select-record-header">
+  <div mat-dialog-title>
+    Select Records
+  </div>
+  <div class="search" *ngIf="dataSource?.data?.length">
+      <mat-form-field [floatLabel]="'never'">
+        <input #searchInput matInput placeholder="Search" [(ngModel)]="search" (ngModelChange)="searchChange()">
+  
+        <button matSuffix mat-button mat-icon-button aria-label="Previous"
+          *ngIf="search.length && searchMatchElementRefs.length" [disabled]="searchTransition === 0"
+          (click)="goBackward()" >
+          <mat-icon>navigate_before</mat-icon>
+        </button>
+  
+        <button matSuffix mat-button mat-icon-button aria-label="Next"
+          *ngIf="search.length && searchMatchElementRefs.length" [disabled]="searchMatchElementRefs.length - 1 === searchTransition"
+          (click)="goForward()" >
+          <mat-icon>navigate_next</mat-icon>
+        </button>
+  
+        <button matSuffix mat-button mat-icon-button aria-label="Clear" *ngIf="search.length" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+  
+        <button matSuffix mat-button mat-icon-button class="search-icon" *ngIf="!search.length">
+          <mat-icon>search</mat-icon>
+        </button>
+        <mat-hint *ngIf="searchMatchElementRefs.length"
+          align="end" >{{searchTransition + 1}} / {{searchMatchElementRefs.length}}</mat-hint>
+      </mat-form-field>
+  </div>
+</div>
+<div class="select-record-wrapper" mat-dialog-content>
+  <app-loader [isLoading]="isLoading"></app-loader>
+  <table #table mat-table [dataSource]="dataSource">
+
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? masterToggle() : null"
+                      [checked]="isAllSelected() && dataSource.data.length"
+                      [indeterminate]="isSomeSelected() && !isAllSelected()">
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="$event ? row.IsAttached = !row.IsAttached : null"
+                      [checked]="row.IsAttached">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ruleName">
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="rule-name">
+          Rule Name
+        </div>
+      </th>
+      <td mat-cell *matCellDef="let element">
+         <div class="rule-name-value">
+           <span>{{element.Name}}</span>
+         </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="param-col-name">
+          Description
+        </div>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <div class="mat-expansion-wrppr">
+          <mat-expansion-panel [hideToggle]="element.CampaignRuleItems.length < 2">
+            <mat-expansion-panel-header>
+                <div class="rule-item-container">
+                  <div class="rule-item">{{element?.CampaignRuleItems[0]?.CampaignRuleField.Name}}</div>
+                  <div class="rule-item">{{element?.CampaignRuleItems[0]?.CampaignLogicType.Name.toLowerCase()}}</div>
+                  <div class="rule-item">"{{getCampaignRuleItemValue(element?.CampaignRuleItems[0])}}"</div>
+                </div>
+            </mat-expansion-panel-header>
+            <div *ngFor="let campaignRuleItem of element.CampaignRuleItems; let idx = index">
+                <div class="rule-item-container" *ngIf="idx >= 1">
+                  <div class="rule-item expansion-panel-content">{{campaignRuleItem.CampaignRuleField.Name}}</div>
+                  <div class="rule-item expansion-panel-content">{{campaignRuleItem.CampaignLogicType.Name.toLowerCase()}}</div>
+                  <div class="rule-item expansion-panel-content">"{{getCampaignRuleItemValue(campaignRuleItem)}}"</div>
+                </div>
+            </div>
+          </mat-expansion-panel>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+    </tr>
+  </table>
+</div>
+<div class="add-rule-btn-wrapper">
+  <button mat-raised-button color="primary" (click)="openCreateRuleModal()" [disabled]="isLoading">New Rule</button>
+</div>
+<div class="button-block" mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close [disabled]="isLoading">Cancel</button>
+  <div class="assign-cancel-buttons">
+    <button mat-raised-button color="primary"  class="cancel-rules-button" [disabled]="isLoading || !isCancelRulesBtnActive" (click)="unassignRulesWithCampaign()">Cancel Rules</button>
+    <button mat-raised-button color="primary" [disabled]="isLoading || !isSomeSelected()" (click)="assignRulesWithCampaign()">Apply Rules</button>
+  </div>
+</div>

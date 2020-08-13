@@ -1,0 +1,217 @@
+<div class="form-container">
+  <div class="loader-shade"
+       *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+  <form
+    class="form contacts-form"
+    [formGroup]="contactsForm"
+    autocomplete="off"
+    (ngSubmit)="formSubmitHandler()"
+    novalidate>
+    <div [ngClass]="{'scrollable-content': !contactId}">
+
+      <div class="footer upper-buttons" *ngIf="permissionContactsWrite && contactId">
+        <div class="controls" *ngIf="isViewMode">
+          <button mat-raised-button type="button" color="primary" (click)="toggleViewMode()">Edit</button>
+        </div>
+        <div class="controls" *ngIf="!isViewMode">
+          <button mat-raised-button class="upper-buttons-cancel" type="button" (click)="resetFormHandler()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="contactsForm.pristine">{{contactId ? 'Save' : 'Create'}}</button>
+        </div>
+      </div>
+
+      <div class="header" *ngIf="!contactId" >
+        <div class="mat-title">
+          New Contact
+        </div>
+      </div>
+      <div class="fields-container">
+        <div class="form-section">
+          <div class="form-row full-width">
+            <div class="mat-title mat-form-field record-title" *ngIf="contactId">
+              <div class="title">Record:</div>
+              <div class="record-link" *ngIf="recordLink">
+                <a matSuffix [routerLink]="['/records', recordLink.Id]" mat-button color="primary" matTooltip="Go to Record page" [title]="recordLink.Name" *ngIf="permissionRecordsRead; else recordLinkName">
+                  {{ recordLink.Name }}
+                </a>
+                <ng-template #recordLinkName>
+                  <div class="mat-body-2">{{recordLink.Name}}</div>
+                </ng-template>
+              </div>
+            </div>
+            <mat-form-field *ngIf="!contactId">
+              <mat-spinner matSuffix [diameter]="20" *ngIf="isLoadingLeadOptions"></mat-spinner>
+              <input
+                matInput
+                placeholder="Record"
+                [matAutocomplete]="leadAuto"
+                formControlName="Lead"
+                [readonly]="contactId || preselectedLeadReadOnly"
+                required
+              >
+              <mat-autocomplete #leadAuto="matAutocomplete" [displayWith]="displayFastEntity">
+                <mat-option *ngFor="let option of leadOptions" [value]="option">
+                  {{ option.Name }}
+                </mat-option>
+              </mat-autocomplete>
+              <mat-error *ngIf="Lead.hasError('required')">Record is required</mat-error>
+              <mat-error *ngIf="Lead.hasError('invalidLeadId')">Invalid record. Please pick record from the list.</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="First Name"
+                formControlName="FirstName"
+                required
+              >
+              <mat-error *ngIf="contactsForm.get('FirstName').hasError('required')">
+                First Name is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Middle Name"
+                formControlName="MiddleName"
+              >
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Last Name"
+                formControlName="LastName"
+                required
+              >
+              <mat-error *ngIf="contactsForm.get('LastName').hasError('required')">
+                Last Name is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row half-width">
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Title"
+                formControlName="Title"
+              >
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select
+                placeholder="Contact Type"
+                formControlName="Type"
+                required
+              >
+                <mat-option *ngFor="let contactType of contactTypesOptions" [value]="contactType.Id">
+                  {{ contactType.Name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="contactsForm.get('Type').hasError('required')">
+                Contact Type is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row half-width">
+            <mat-form-field>
+              <input
+                matInput
+                type="tel"
+                [mask]="phoneMask"
+                [dropSpecialCharacters]="false"
+                placeholder="Cell Phone"
+                formControlName="CellPhone"
+              >
+              <mat-error *ngIf="contactsForm.get('CellPhone').hasError('pattern')">Please enter a valid phone number.</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                type="tel"
+                [mask]="phoneMask"
+                [dropSpecialCharacters]="false"
+                placeholder="Office Phone"
+                formControlName="OfficePhone"
+              >
+              <mat-error *ngIf="contactsForm.get('OfficePhone').hasError('pattern')">Please enter a valid phone number.</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row full-width">
+            <mat-form-field>
+              <input
+                matInput
+                type="email"
+                placeholder="Email"
+                formControlName="Email"
+              >
+              <mat-error *ngIf="contactsForm.get('Email').hasError('pattern')">Please enter valid email address.</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div formGroupName="Address">
+            <div class="form-row full-width">
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Mailing Address 1"
+                  formControlName="Address1"
+                >
+              </mat-form-field>
+            </div>
+            <div class="form-row full-width">
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Mailing Address 2"
+                  formControlName="Address2"
+                >
+              </mat-form-field>
+            </div>
+            <div class="form-row full-width">
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Mailing Address 3"
+                  formControlName="Address3"
+                >
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field>
+                <input matInput placeholder="Mailing City" formControlName="City">
+              </mat-form-field>
+
+              <mat-form-field>
+                <input placeholder="Mailing State" type="text" matInput [matAutocomplete]="auto" formControlName="State">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFastEntity">
+                  <mat-option *ngFor="let option of filteredStates" [value]="option">
+                    {{option.Name}}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="State.hasError('stateNotInTheList')">Please enter correct name or pick from the list</mat-error>
+              </mat-form-field>
+
+              <mat-form-field>
+                <input matInput placeholder="Mailing Zip Code" formControlName="Zip">
+              </mat-form-field>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="footer" *ngIf="permissionContactsWrite && !contactId">
+        <div class="controls" *ngIf="isViewMode">
+          <button mat-raised-button type="button" (click)="toggleViewMode()">Edit</button>
+        </div>
+        <div class="controls" *ngIf="!isViewMode">
+          <button mat-raised-button type="button" (click)="resetFormHandler()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="contactsForm.pristine">{{contactId ? 'Save' : 'Create'}}</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

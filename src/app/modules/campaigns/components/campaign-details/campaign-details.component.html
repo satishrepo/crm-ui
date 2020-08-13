@@ -1,0 +1,101 @@
+<div class="campaign-details-wrapper">
+  <div class="mat-card-wrapper">
+    <mat-card class="campaign-details">
+      <mat-card-header>
+        <!-- <div style="flex: 1 1 0"></div> -->
+        <div class="buttons">
+          <div class="edit-save-btns">
+            <div class="edit-btn" *ngIf="permissionCampaignsWrite">
+              <button
+                *ngIf="editDisable"
+                mat-raised-button
+                (click)="toggleEditMode()"
+                color="primary">Edit</button>
+              </div>
+              <div class="edit-confirm-btns" *ngIf="permissionCampaignsWrite && !editDisable">
+                <button mat-raised-button class="cancel-btn" (click)="cancelEditing()">Cancel</button>
+                <button mat-raised-button color="primary" (click)="editCampaign()" [disabled]="isLoading">Save</button>
+              </div>
+          </div>
+
+          <div>
+            <div class="action-button">
+              <mat-progress-bar mode="indeterminate" *ngIf="isActionsInProgress"  class="actions-progress"></mat-progress-bar>
+              <button aria-label="event-actions-trigger" mat-stroked-button [matMenuTriggerFor]="menu">
+                Actions
+                <mat-icon class="button-icon">expand_more</mat-icon>
+              </button>
+            </div>
+            <mat-menu #menu="matMenu">
+              <button
+                aria-label="mail-merge"
+                mat-menu-item
+                class="mat-menu-button"
+                (click)="openDataDumpsDialog()"
+                *ngIf="permissionCampaignsDataDumpRead"
+              >
+                <mat-icon>import_export</mat-icon>
+                <div class="menu-button-text">Export Data
+                </div>
+            </button>
+
+            <button
+              *ngIf="permissionMailMergeRead"
+              aria-label="mail-merge"
+              mat-menu-item
+              class="mat-menu-button"
+              (click)="openMailMergeDialog()"
+              [disabled]="isMailMergeProcessing || isMailMergeQueued"
+            >
+              <mat-icon *ngIf="!isMailMergeProcessing && !isMailMergeQueued">mail</mat-icon>
+              <div class="menu-loader" *ngIf="isMailMergeProcessing && !isMailMergeQueued">
+                <mat-spinner class="spinner" diameter="29"></mat-spinner>
+                <div class="progress" *ngIf="mailmergeStatus?.progress">
+                    {{mailmergeStatus?.progress}}
+                </div>
+              </div>
+              <mat-icon class="rotating" *ngIf="isMailMergeQueued">autorenew</mat-icon>
+              <div class="menu-button-text">
+                  Mail Merge
+                  <span class="hint">
+                    {{isMailMergeProcessing && !isMailMergeQueued ? 'Processing...' : ''}}
+                    {{isMailMergeQueued ? 'Server Busy' : ''}}
+                  </span>
+              </div>
+            </button>
+            </mat-menu>
+          </div>
+        </div>
+      </mat-card-header>
+      <app-campaign-details-form
+        *ngIf="campaignDetails"
+        [initialValues]="campaignDetails"
+        [editDisable]="editDisable"
+        [users]="loanDepartmentUsers"
+        [allUsers]="users"
+        [campaignTypes]="campaignTypes"
+        [states]="states"
+        (recordsChanged)="reloadRecords(campaignDetails.Id)"
+        [generalLandUseCodes]="generalLandUseCodes"
+      ></app-campaign-details-form>
+
+
+      <app-loader [isLoading]="isLoading"></app-loader>
+    </mat-card>
+  </div>
+  <mat-card class="campaign-comments" *ngIf="permissionCampaignCommentsRead">
+    <mat-card-content>
+        <app-comments
+          [comments]="campaignComments"
+          (addComment)="addComment($event)"
+          (fetchComments)="getComments($event)"
+          [isLoading]="isLoadingComments"
+          [commentsWriteEnabled]="permissionCampaignCommentsWrite"
+          [editableComments]="permissionCampaignCommentsWrite"
+          [deletableComments]="permissionCampaignCommentsWrite"
+          [saveComment]="saveComment"
+          [deleteComment]="deleteComment"
+        ></app-comments>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,25 @@
+.lead-data-details{
+    margin: 10px;
+    min-width: 680px;
+}
+.table-container{
+    width: 100%;
+}
+table{
+    width: 100%;
+    table-layout: fixed;
+}
+.mat-header-cell, .mat-cell {
+    padding: 8px 8px 8px 0;
+    &:first-of-type{
+        padding-left: 0;
+    }
+}
+.dialog-title{
+    display: flex;
+    justify-content: space-between;
+
+    h2{
+        margin: 0;
+    }
+}

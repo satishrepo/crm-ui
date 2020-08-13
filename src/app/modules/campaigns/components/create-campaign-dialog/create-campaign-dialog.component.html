@@ -1,0 +1,15 @@
+<div class="create-campai" mat-dialog-title >New Campaign</div>
+<div class="form-wrapper" mat-dialog-content>
+    <mat-progress-bar *ngIf="isSaving" mode="indeterminate"></mat-progress-bar>
+    <app-campaign-details-form
+    [editDisable]="false"
+    [users]="users"
+    [campaignTypes]="campaignTypes"
+    [states]="states"
+    [generalLandUseCodes]="generalLandUseCodes"
+  ></app-campaign-details-form>
+</div>
+<div class="confirm-button-wrapper" mat-dialog-actions>
+    <button mat-raised-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" (click)="createCampaign()" [disabled]="isSaving">Create</button>
+</div>

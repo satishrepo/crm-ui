@@ -1,0 +1,137 @@
+.campaign-details-wrapper {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: flex-start;
+
+  .mat-card-wrapper {
+    margin-right: 10px;
+    margin-bottom: 24px;
+    flex-grow: 3;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    .campaign-details {
+      width: 100%;
+      .buttons {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        .action-button {
+          position: relative;
+        }
+        .cancel-btn {
+          margin-right: 20px;
+        }
+      }
+    }
+
+    .data-dump-btn {
+      width: 142px;
+      padding-left: 15px;
+    }
+  }
+
+  .edit-confirm-btns {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .campaign-comments{
+    flex-grow: 1;
+  }
+
+  .saving-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+}
+  @keyframes rotating {
+    from{
+        -webkit-transform: rotate(0deg);
+    }
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+  }
+
+  .rotating {
+    animation: rotating 2s linear infinite;
+  }
+
+.mat-menu-button {
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+}
+
+.menu-button-text {
+  position: relative;
+
+  .hint {
+    position: absolute;
+    font-size: 10.5px;
+    bottom: -12px;
+    left: -1px;
+    color: rgba(0,0,0,.38);
+    padding-left: 1px;
+  }
+}
+
+.actions-progress{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  border-radius: 0 0 4px 4px;
+}
+
+.menu-loader {
+  display: inline-block;
+  position: relative;
+  margin-right: 7px;
+
+  .progress {
+    position: absolute;
+    top: -9px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto auto;
+    color: rgba(0,0,0,0.5);
+    text-align: center;
+  }
+}
+
+.button-with-spinner {
+  position: relative;
+  .spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+::ng-deep .campaign-details-wrapper {
+  .mat-card-header-text { margin: 0 !important; }
+}

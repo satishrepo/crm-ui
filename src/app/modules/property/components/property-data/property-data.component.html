@@ -1,0 +1,235 @@
+<mat-card class="property-data-details">
+  <mat-card-content>
+      <mat-tab-group animationDuration="0ms" mat-stretch-tabs>
+          <mat-tab label="Property Data">
+            <div class="property-details-tab-content">
+            <div class="details-group">
+                <div class="fields-row">
+                    <mat-form-field>
+                        <mat-label>County/Jurisdiction</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.County?.Name}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Parcel ID</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.ParcelId}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>CAD ID</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.CadId}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>TAX ID</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.TaxId}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Property Address</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.Address?.Address1}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Property City</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.Address?.City}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Property State</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.Address?.State.Name}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Property Zip Code</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.Address?.Zip}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Legal Description</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.LegalDescription}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Land State Code</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.LandStateCode}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Improvement State Code</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.ImprovementStateCode}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Land Use Code</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.LandUseCode}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>General Land Use Code</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.GeneralLandUseCode.Name}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Over 65/Surviving Spouse</mat-label>
+                        <mat-select [value]="selectedProperty?.SurvivingSpouse" disabled>
+                          <mat-option *ngFor="let option of booleanSelectOptions" [value]="option.Id">{{ option.Name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Disability Exemption</mat-label>
+                        <mat-select [value]="selectedProperty?.DisabilityExemption" disabled>
+                          <mat-option *ngFor="let option of booleanSelectOptions" [value]="option.Id">{{ option.Name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Mortgage</mat-label>
+                        <mat-select [value]="selectedProperty?.Mortgage" disabled>
+                          <mat-option *ngFor="let option of booleanSelectOptions" [value]="option.Id">{{ option.Name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Payment Plan</mat-label>
+                        <mat-select [value]="selectedProperty?.PaymentPlan" disabled>
+                          <mat-option *ngFor="let option of booleanSelectOptions" [value]="option.Id">{{ option.Name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Veteran</mat-label>
+                        <mat-select [value]="selectedProperty?.Veteran" disabled>
+                          <mat-option *ngFor="let option of booleanSelectOptions" [value]="option.Id">{{ option.Name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Bankruptcy</mat-label>
+                        <mat-select [value]="selectedProperty?.Bankruptcy" disabled>
+                          <mat-option *ngFor="let option of booleanSelectOptions" [value]="option.Id">{{ option.Name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>3rd Party Foreclosure</mat-label>
+                        <mat-select [value]="selectedProperty?.ThirdPartyForeclosure" disabled>
+                          <mat-option *ngFor="let option of booleanSelectOptions" [value]="option.Id">{{ option.Name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="details-group">
+                <h4>Property Valuations (by Year)</h4>
+                <div class="fields-row">
+                    <mat-form-field>
+                        <mat-label>Appraised Year</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.Valuations && selectedProperty?.Valuations[0]?.Year}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Land Value</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.Valuations && selectedProperty?.Valuations[0]?.LandValue | currency}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Improvement Value</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.Valuations && selectedProperty?.Valuations[0]?.ImprovementValue | currency}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Appraised Value</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.Valuations && selectedProperty?.Valuations[0]?.AppraisedValue | currency}}">
+                    </mat-form-field>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="details-group">
+                <h4>Property Tax Delinquency</h4>
+                <div class="fields-row">
+                    <mat-form-field>
+                        <mat-label>Delinquency Year</mat-label>
+                        <input class="detail-input" matInput disabled value="{{selectedProperty?.TaxDelinquencies && selectedProperty?.TaxDelinquencies[0]?.Year}}">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Amount Due</mat-label>
+                        <input class="detail-input" matInput disabled value="{{ getTaxTotalAmount() | currency }}">
+                    </mat-form-field>
+                </div>
+            </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="Tax Delinquency">
+            <div class="property-details-tab-content">
+                <table mat-table [dataSource]="selectedProperty?.TaxDelinquenciesList">
+                    <ng-container matColumnDef="Year">
+                        <th mat-header-cell *matHeaderCellDef>Delinquency Year </th>
+                        <td mat-cell *matCellDef="let taxDelinquency"> {{taxDelinquency.Year}} </td>
+                        <td mat-footer-cell *matFooterCellDef></td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="CollectingEntity">
+                        <th mat-header-cell *matHeaderCellDef> Collecting Entity </th>
+                        <td mat-cell *matCellDef="let taxDelinquency"> {{taxDelinquency.CollectingEntity?.Name}} </td>
+                        <td mat-footer-cell *matFooterCellDef> <strong>Total Due</strong> </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="AmountDue">
+                        <th mat-header-cell *matHeaderCellDef> Amount Due </th>
+                        <td mat-cell *matCellDef="let taxDelinquency"> {{taxDelinquency.AmountDue | currency}} </td>
+                        <td mat-footer-cell *matFooterCellDef> {{getTaxTotalAmount() | currency}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="taxDelinquencyColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: taxDelinquencyColumns;"></tr>
+                    <tr mat-footer-row *matFooterRowDef="taxDelinquencyColumns"></tr>
+                </table>
+            </div>
+         </mat-tab>
+         <mat-tab label="Valuation">
+            <div class="property-details-tab-content">
+                <table mat-table [dataSource]="selectedProperty?.Valuations">
+                    <ng-container matColumnDef="Year">
+                        <th mat-header-cell *matHeaderCellDef>Appraised Year </th>
+                        <td mat-cell *matCellDef="let valuation"> {{valuation.Year}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="LandValue">
+                        <th mat-header-cell *matHeaderCellDef> Land Value </th>
+                        <td mat-cell *matCellDef="let valuation"> {{valuation.LandValue | currency}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="ImprovementValue">
+                        <th mat-header-cell *matHeaderCellDef> Improvement Value </th>
+                        <td mat-cell *matCellDef="let valuation"> {{valuation.ImprovementValue | currency}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="AppraisedValue">
+                        <th mat-header-cell *matHeaderCellDef> Appraised Value </th>
+                        <td mat-cell *matCellDef="let valuation"> {{valuation.AppraisedValue | currency}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="valuationsColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: valuationsColumns;"></tr>
+                </table>
+            </div>
+        </mat-tab>
+         <mat-tab label="Contact" *ngIf="permissionContactsRead">
+            <div class="property-details-tab-content">
+                <div class="contacts-wrapper" *ngFor="let contact of selectedProperty?.Contacts; let last = last;">
+                    <div class="fields-row">
+                        <mat-form-field>
+                            <mat-label>Contact Type</mat-label>
+                            <input class="detail-input" matInput disabled value="{{contact.Type.Name}}">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Name</mat-label>
+                            <input class="detail-input" matInput disabled value="{{contact.FirstName + ' ' + contact.LastName}}">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Title</mat-label>
+                            <input class="detail-input" matInput disabled value="{{contact.Title}}">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Cell Phone</mat-label>
+                            <input class="detail-input" matInput disabled [ngModel]="contact?.CellPhone" [mask]="phoneMask">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Office Phone</mat-label>
+                            <input class="detail-input" matInput disabled [ngModel]="contact.OfficePhone" [mask]="phoneMask">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Email</mat-label>
+                            <input class="detail-input" matInput disabled value="{{contact.Email}}">
+                        </mat-form-field>
+                    </div>
+                    <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
+                </div>
+                <div *ngIf="!selectedProperty || !selectedProperty?.Contacts || !selectedProperty?.Contacts.length">
+                    No Contacts Found
+                </div>
+            </div>
+        </mat-tab>
+      </mat-tab-group>
+  </mat-card-content>
+</mat-card>

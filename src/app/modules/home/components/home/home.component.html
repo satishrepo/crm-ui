@@ -1,0 +1,15 @@
+<div class="page">
+  <app-header [sideNavOpened]="sideNavOpened" (toggleSideNav)="toggleSideNavVisibility()" appTitle="Caz Creek CRM"></app-header>
+  <mat-sidenav-container fullscreen id="container" class="page-content">
+    <mat-sidenav autoFocus="false" #sideNav>
+      <app-navigation-drawer [items]="items" [modules]="modules"></app-navigation-drawer>
+    </mat-sidenav>
+    <mat-sidenav [fixedInViewport]="true" [fixedTopGap]="64" mode="side" position="end" class="sidenav-right" opened>
+      <app-calendar></app-calendar>
+      <mat-divider></mat-divider>
+    </mat-sidenav>
+    <mat-sidenav-content class="page-content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

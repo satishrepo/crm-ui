@@ -1,0 +1,22 @@
+.property-details{
+    justify-content: start;
+    display: flex;
+    padding: 10px;
+    flex-direction: row;
+    .col1{
+        width: 45%;
+    }
+    .col2{
+        width: 55%;
+    }
+}
+.property-data-details{
+    margin-right: 10px;
+}
+.record-account-name{
+    padding: 10px 20px 0;
+}
+.dashboard-module {
+    display: block;
+    margin-bottom: 20px;
+  }

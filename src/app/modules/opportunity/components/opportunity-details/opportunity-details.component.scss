@@ -1,0 +1,50 @@
+.opportunity-dashboard {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+  
+    .selected-opportunity {
+      width: 50%;
+      margin-right: 10px;
+      display: block;
+      box-sizing: border-box;
+    }
+    .lead-related-items {
+      width: 50%;
+      margin-left: 10px;
+      display: block;
+      box-sizing: border-box;
+    }
+    .dashboard-module {
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .primary-contact {
+      margin-bottom: 25px;
+      padding-left: 56px;
+    }
+  }
+
+.related-contacts-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 10px 0;
+
+  .controls {
+    margin-right: 15px;
+  }
+
+  .mat-title {
+    margin-bottom: 0;
+  }
+}
+.table-instruction{
+  padding: 0 9px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}

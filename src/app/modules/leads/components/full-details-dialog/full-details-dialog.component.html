@@ -1,0 +1,49 @@
+<div class="dialog-title">
+  <h2 class="mat-h2">{{data.title}}</h2>
+  <button mat-button mat-dialog-close class="no-focus-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>  
+
+<div mat-dialog-content>
+    <!-- RESULTS TABLE -->
+    <div class="table-container">
+      <table
+        mat-table
+        [dataSource]="data.list">
+        <ng-container *ngFor="let col of data.headerCols;">
+          <ng-container [matColumnDef]="col.field">
+            <th mat-header-cell *matHeaderCellDef> {{col.title}} </th>
+            <td mat-cell *matCellDef="let element">
+                <span *ngIf="element[col.field]?.hasOwnProperty('Name')">
+                    {{element[col.field].Name}}
+                </span>
+                <span *ngIf="!element[col.field]?.hasOwnProperty('Name') && col.field !== 'Address'">
+                    <span *ngIf="col.type && col.type === 'currency'">{{element[col.field] | currency}}</span>
+                    <span *ngIf="col.type && col.type === 'date'">{{element[col.field] | date}}</span>
+                    <span *ngIf="!col.type">{{element[col.field]}}</span>
+                </span>
+                <span *ngIf="col.field === 'Address'">
+                    <span *ngIf="element[col.field].Address1 !== null" >{{element[col.field].Address1}}</span>
+                    <span *ngIf="element[col.field].Address2 !== null" >{{element[col.field].Address2}}</span>
+                    <span *ngIf="element[col.field].Address3 !== null" >{{element[col.field].Address3}}</span>
+                </span>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr class="pointer" mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)"></tr>
+      </table>
+    </div>
+  <!-- /RESULTS TABLE -->
+</div>
+<div mat-dialog-footer>
+  <mat-paginator
+    [pageSizeOptions]="pageSizeOptions"
+    [pageSize]="10"
+    [length]="totalCount"
+    (page)="changePage()"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>

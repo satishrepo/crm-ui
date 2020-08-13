@@ -1,0 +1,36 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  .page-content {
+    flex: 1 0 auto;
+    padding-top: 33px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    @media(max-width: 599px) {
+      margin-top: 33px;
+    }
+  }
+  .icon-right-text{
+    margin-right: 5px;
+  }
+  .sidenav-right{
+    padding-top: 10px;
+    width: 220px;
+  }
+  *::-webkit-scrollbar {
+    width: 0.5em;
+  }
+
+  *::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+  }

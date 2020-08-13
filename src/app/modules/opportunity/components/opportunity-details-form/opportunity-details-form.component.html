@@ -1,0 +1,709 @@
+<div class="form-container">
+  <app-loader [isLoading]="isLoading"></app-loader>
+  <form
+    class="form"
+    [formGroup]="opportunityForm"
+    autocomplete="off"
+    (ngSubmit)="formSubmitHandler()"
+    novalidate>
+    <div [ngClass]="{'scrollable-content': !initialValues}">
+      <div class="edit-opportunity-header" *ngIf="permissionOpportunitiesWrite && initialValues">
+        <div class="controls">
+          <ng-container *ngIf="isViewMode">
+            <button mat-raised-button color="primary" type="button" (click)="toggleViewMode()">Edit</button>
+          </ng-container>
+          <ng-container *ngIf="!isViewMode">
+            <button mat-raised-button type="button" (click)="resetFormHandler()">Cancel</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="opportunityForm.pristine">{{initialValues ? "Save" : "Create"}}</button>
+          </ng-container>
+        </div>
+      </div>
+      <div class="header" *ngIf="!initialValues && !isLoading" >
+        <div class="mat-title">
+            New Opportunity
+        </div>
+      </div>
+      <div class="fields-container">
+        <div class="form-row half-width">
+          <div class="mat-title mat-form-field record-title" *ngIf="initialValues">
+            <div class="title">Record:</div>
+            <div class="record-link" *ngIf="relatedLead?.Id">
+              <a matSuffix [routerLink]="['/records', relatedLead.Id]" mat-button color="primary" matTooltip="Go to Record page" *ngIf="permissionRecordsRead; else relatedLeadName">
+                {{relatedLead.Name}}
+              </a>
+              <ng-template #relatedLeadName>
+                <div class="mat-body-2">{{relatedLead.Name}}</div>
+              </ng-template>
+            </div>
+          </div>
+          <mat-form-field *ngIf="!initialValues">
+            <mat-spinner matSuffix [diameter]="20" *ngIf="isLoadingLeadOptions"></mat-spinner>
+            <input
+              matInput
+              placeholder="Record"
+              [matAutocomplete]="leadAuto"
+              formControlName="Lead"
+              [readonly]="initialValues"
+              required
+            >
+            <mat-autocomplete #leadAuto="matAutocomplete" [displayWith]="displayFastEntity">
+              <mat-option *ngFor="let option of leadOptions" [value]="option">
+                {{ option.Name }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="Lead.hasError('required')">Record is required</mat-error>
+            <mat-error *ngIf="Lead.hasError('notFastEntity') && !Lead.hasError('required')">Invalid record. Please pick record from the list.</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="form-row half-width">
+          <mat-form-field>
+            <mat-select
+              placeholder="Stage"
+              formControlName="Stage"
+              required
+            >
+              <mat-option *ngFor="let stage of opportunityStagesOptions" [value]="stage.Id">
+                {{ stage.Name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="opportunityForm.get('Stage').hasError('required')">
+              Stage is required
+            </mat-error>
+          </mat-form-field>
+          <div class="mat-form-field field-with-controls">
+            <mat-form-field>
+              <mat-spinner matSuffix [diameter]="20" *ngIf="isLoadingContactsOptions"></mat-spinner>
+              <input
+                matInput
+                placeholder="Primary Contact"
+                [matAutocomplete]="contactsAuto"
+                formControlName="Contact"
+                [readonly]="!permissionContactsRead || Lead.invalid || this.isLoadingContactsOptions"
+                required
+              >
+              <mat-autocomplete #contactsAuto="matAutocomplete" [displayWith]="displayFastEntity">
+                <mat-option *ngFor="let option of contactsOptions" [value]="option">
+                  {{ option.Name }}
+                </mat-option>
+              </mat-autocomplete>
+              <mat-error *ngIf="!Lead.invalid && Contact.hasError('required')">Primary Contact is required</mat-error>
+              <mat-error *ngIf="!Contact.hasError('required') && Contact.hasError('notFastEntity')">Primary Contact is required</mat-error>
+              <mat-hint *ngIf="Lead.invalid">You should select record first</mat-hint>
+            </mat-form-field>
+            <div class="controls" *ngIf="!initialValues">
+              <button (click)="addNewPrimaryContact()"
+                      mat-icon-button type="button" [disabled]="Lead.invalid" matTooltip="Create new Primary Contact" color="primary">
+                <mat-icon>group_add</mat-icon>
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div class="properties-wrapper">
+          <div class="form-group-title">
+            <h4>Properties *</h4>
+          </div>
+          <div class="form-row full-width property-autocomplete" *ngIf="permissionPropertiesRead && !isViewMode">
+            <mat-form-field>
+              <mat-spinner matSuffix [diameter]="20" *ngIf="isLoadingPropertyOptions"></mat-spinner>
+              <input
+                matInput
+                placeholder="Choose Property"
+                [matAutocomplete]="propertyAuto"
+                formControlName="Property"
+                [readonly]="this.Lead.invalid || this.isLoadingPropertyOptions"
+              >
+              <mat-autocomplete #propertyAuto="matAutocomplete" class="autocomplete" [displayWith]="displayFastEntity">
+                <mat-option *ngFor="let option of propertyOptions" [value]="option">
+                  {{ option.Name }}
+                </mat-option>
+              </mat-autocomplete>
+              <mat-hint *ngIf="Lead.invalid">You should select record first</mat-hint>
+            </mat-form-field>
+            <button [disabled]="!Property.value.Id" mat-button mat-icon-button color="primary" matTooltip="Add Property" (click)="addProperty()" type="button">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </div>
+          <div class="linked-properties-wrapper">
+            <div *ngIf="!linkedProperties.length" [ngClass]="{'no-properties': true, 'error': !validProperties}">No Properties Added</div>
+            <div class="linked-property" *ngFor="let linkedProperty of linkedProperties">
+              <a class="linked-property-name" [routerLink]="['/properties', linkedProperty.Id]" mat-button color="primary" matTooltip="Go to Property page" *ngIf="permissionPropertiesRead; else linkedPropertyName">
+                {{linkedProperty.Name}}
+              </a>
+              <ng-template #linkedPropertyName>
+                <div class="linked-property-name mat-body-2">{{linkedProperty.Name}}</div>
+              </ng-template>
+
+              <button *ngIf="permissionPropertiesRead && !isViewMode" mat-button matTooltip="Remove Property" color="warn" (click)="removeProperty(linkedProperty.Id)" type="button">
+                <mat-icon>remove_circle_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="opportunity-main-details">
+          <div class="form-group-title">
+            <h4>Loan Details</h4>
+          </div>
+          <div class="form-row full-width">
+            <mat-form-field>
+              <mat-select
+                placeholder="Loan Type"
+                formControlName="LoanType"
+              >
+                <mat-option>None</mat-option>
+                <mat-option *ngFor="let loanType of loanTypeOptions" [value]="loanType.Id">
+                  {{ loanType.Name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-row full-width">
+            <mat-form-field>
+              <mat-select placeholder="Property Type" formControlName="OpportunityPropertyTypeId" required>
+                <mat-option *ngFor="let propertyType of propertyTypeOptions" [value]="propertyType.Id">
+                  {{ propertyType.Name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="opportunityForm.get('OpportunityPropertyTypeId').hasError('required')">
+                Property Type is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field>
+              <mat-datepicker-toggle matPrefix [for]="closeDatePicker"></mat-datepicker-toggle>
+              <input
+                matInput
+                [matDatepicker]="closeDatePicker"
+                placeholder="Close Date"
+                formControlName="CloseDate"
+                (dateChange)="formatDateValue(opportunityForm.get('CloseDate'), $event)"
+                (change)="formatDateValue(opportunityForm.get('CloseDate'), $event)"
+              >
+              <button
+                matSuffix
+                mat-icon-button
+                (click)="CloseDate.setValue('')"
+                *ngIf="CloseDate.value && !isViewMode" >
+                <mat-icon>clear</mat-icon>
+              </button>
+              <mat-datepicker #closeDatePicker></mat-datepicker>
+              <mat-error *ngIf="CloseDate.hasError('matDatepickerParse')">
+                Enter valid date e.g. mm/dd/yyyy
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <span matSuffix>% &nbsp;</span>
+              <input
+                matInput
+                placeholder="Close Probability"
+                formControlName="CloseProbabilityPercent">
+              <mat-error *ngIf="CloseProbabilityPercent.hasError('min')">
+                Value should be greater than 0%
+              </mat-error>
+              <mat-error *ngIf="CloseProbabilityPercent.hasError('max')">
+                Value should be less than 100%
+              </mat-error>
+              <mat-error *ngIf="CloseProbabilityPercent.hasError('pattern') && !CloseProbabilityPercent.hasError('max') && !CloseProbabilityPercent.hasError('min')">
+                Enter valid number e.g. 0.25.
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <span matPrefix>$ &nbsp;</span>
+              <input
+                matInput
+                mask="comma_separator.2"
+                placeholder="Closing Cost"
+                formControlName="ClosingCost">
+              <mat-error *ngIf="ClosingCost.hasError('min')">
+                Value should be greater than 0
+              </mat-error>
+              <mat-error *ngIf="ClosingCost.hasError('pattern') && !ClosingCost.hasError('min')">
+                Enter valid number e.g. 150.25
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field>
+              <span matSuffix>% &nbsp;</span>
+              <input
+                matInput
+                placeholder="Origination"
+                formControlName="OriginationPercent">
+              <mat-error *ngIf="OriginationPercent.hasError('pattern') || OriginationPercent.hasError('max') || OriginationPercent.hasError('min')">
+                Enter valid number from 0 to 100 e.g. 0.25.
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <span matPrefix>$ &nbsp;</span>
+              <input
+                matInput
+                mask="comma_separator.2"
+                placeholder="Lender Credit"
+                formControlName="LenderCredit">
+              <mat-error *ngIf="LenderCredit.hasError('min')">
+                Value should be greater than 0
+              </mat-error>
+              <mat-error *ngIf="LenderCredit.hasError('pattern') && !LenderCredit.hasError('min')">
+                Enter valid number e.g. 150.25
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row half-width">
+            <mat-form-field *ngIf="LoanType?.value === LOAN_TYPES.Refi || LoanType?.value === LOAN_TYPES.RefiConsolidation">
+              <span matPrefix>$ &nbsp;</span>
+              <input matInput
+                     mask="comma_separator.2"
+                     placeholder="Current Loan Balance"
+                     formControlName="CurrentLoanBalance" >
+              <mat-error *ngIf="CurrentLoanBalance.hasError('min')">
+                Value should be greater than 0
+              </mat-error>
+              <mat-error *ngIf="CurrentLoanBalance.hasError('pattern') && !CurrentLoanBalance.hasError('min')">
+                Enter valid number e.g. 150.25
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field *ngIf="LoanType?.value === LOAN_TYPES.NewConsolidation || LoanType?.value === LOAN_TYPES.RefiConsolidation || LoanType?.value === LOAN_TYPES.SylConsolidation">
+              <span matPrefix>$ &nbsp;</span>
+              <input
+                matInput
+                mask="comma_separator.2"
+                formControlName="ThirdPartyLoanBalance"
+                placeholder="3rd Party Loan Balance">
+              <mat-error *ngIf="ThirdPartyLoanBalance.hasError('min')">
+                Value should be greater than 0
+              </mat-error>
+              <mat-error *ngIf="ThirdPartyLoanBalance.hasError('pattern') && !ThirdPartyLoanBalance.hasError('min')">
+                Enter valid number e.g. 150.25
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row half-width">
+            <mat-form-field>
+              <span matPrefix>$ &nbsp;</span>
+              <input
+                matInput
+                placeholder="New Loan Amount"
+                readonly
+                formControlName="NewLoanAmount"
+                style="display: none;"
+              >
+              <!-- fix negative numbers ngxMask  -->
+              <input readonly [value]="NewLoanAmountField.value | currency:'':''" matInput>
+              <mat-error *ngIf="NewLoanAmountField.hasError('min')">
+                Value should be greater than 0
+              </mat-error>
+              <mat-error *ngIf="NewLoanAmountField.hasError('pattern') && !NewLoanAmountField.hasError('min')">
+                Enter valid number e.g. 150.25
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <span matPrefix>$ &nbsp;</span>
+              <input
+                matInput
+                mask="comma_separator.2"
+                readonly
+                formControlName="MonthlyPayment"
+                placeholder="Monthly Payment">
+              <mat-error *ngIf="MonthlyPaymentField.hasError('min')">
+                Value should be greater than 0
+              </mat-error>
+              <mat-error *ngIf="MonthlyPaymentField.hasError('pattern') && !MonthlyPaymentField.hasError('min')">
+                Enter valid number e.g. 150.25
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row full-width radio-group">
+            <mat-radio-group formControlName="isAdjustedDisabled" class="amount-due-selector-group">
+              <mat-radio-button value="false">
+                <mat-form-field>
+                  <span matPrefix class="black-color">$ &nbsp;</span>
+                  <input
+                    matInput
+                    mask="comma_separator.2"
+                    placeholder="Adjusted Amount Due"
+                    formControlName="AmountDue">
+                  <mat-error *ngIf="AmountDue.hasError('min')">
+                    Value should be greater than 0
+                  </mat-error>
+                  <mat-error *ngIf="AmountDue.hasError('pattern') && !AmountDue.hasError('min')">
+                    Enter valid number e.g. 150.25
+                  </mat-error>
+                </mat-form-field>
+              </mat-radio-button>
+              <mat-radio-button value="true">
+                <mat-form-field>
+                  <span matPrefix class="black-color">$ &nbsp;</span>
+                  <input
+                    matInput
+                    mask="comma_separator.2"
+                    placeholder="Calculated Amount Due"
+                    formControlName="CalculatedAmountDue"
+                    readonly>
+                </mat-form-field>
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div class="form-row">
+            <mat-form-field>
+              <span matSuffix>% &nbsp;</span>
+              <input
+                matInput
+                placeholder="Interest Rate"
+                formControlName="InterestRate">
+              <mat-error *ngIf="InterestRate.hasError('min')">
+                Value should be greater than 0%
+              </mat-error>
+              <mat-error *ngIf="InterestRate.hasError('max')">
+                Value should be less than 100%
+              </mat-error>
+              <mat-error *ngIf="InterestRate.hasError('pattern') && !InterestRate.hasError('max') && !InterestRate.hasError('min')">
+                Enter valid number from 0 to 100 e.g. 0.25.
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                placeholder="Term"
+                formControlName="Term">
+              <mat-error *ngIf="Term.hasError('pattern')">
+                Value should be valid positive integer
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <span matPrefix>$ &nbsp;</span>
+              <input
+                matInput
+                mask="comma_separator.2"
+                placeholder="PrePay"
+                formControlName="PrePay">
+              <mat-error *ngIf="PrePay.hasError('min')">
+                Value should be greater than 0
+              </mat-error>
+              <mat-error *ngIf="PrePay.hasError('pattern') && !PrePay.hasError('min')">
+                Enter valid number e.g. 150.25
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field>
+              <span matSuffix>% &nbsp;</span>
+              <input
+                matInput
+                readonly
+                placeholder="LTV (loan to value)"
+                formControlName="LoanToValuePercent">
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row" *ngIf="!isCommercialBorrowerActive">
+          <div formArrayName="Borrowers" *ngFor="let borrower of BorrowersFormArray.controls; let i = index;" class="col">
+            <div [formGroupName]="i">
+              <div class="form-group-title">
+                <h4>Borrower {{i + 1}}</h4>
+              </div>
+              <div>
+                <div class="form-row full-width">
+                  <div class="mat-form-field custom-error">
+                    <mat-form-field>
+                      <input matInput placeholder="First Name" formControlName="FirstName" [required]="requiredBorrower(i)">
+                    </mat-form-field>
+                    <div class="mat-form-field-subscript-wrapper">
+                      <mat-error
+                        class="mat-error" *ngIf="borrower.get('FirstName').hasError('required') || (borrower.hasError('requiredFirstAndLastNameForUnderFill') && !borrower.get('FirstName').value)">First Name is required</mat-error>
+                      <mat-error
+                        class="mat-error"
+                        *ngIf="invalidBorrowerName(i)">Borrowers should be unique</mat-error>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input matInput placeholder="Middle Name" formControlName="MiddleName">
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <div class="mat-form-field custom-error">
+                    <mat-form-field>
+                      <input matInput placeholder="Last Name" formControlName="LastName" [required]="requiredBorrower(i)">
+                    </mat-form-field>
+                    <div class="mat-form-field-subscript-wrapper">
+                      <mat-error class="mat-error" *ngIf="borrower.get('LastName').hasError('required') || (borrower.hasError('requiredFirstAndLastNameForUnderFill') && !borrower.get('LastName').value)">Last Name is required</mat-error>
+                      <mat-error class="mat-error" *ngIf="invalidBorrowerName(i)">Borrowers should be unique</mat-error>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="form-row full-width">
+                    <mat-form-field
+                      formGroupName="SSN">
+                      <input
+                        matInput
+                        placeholder="Social Security Number"
+                        mask="000-00-0000"
+                        [dropSpecialCharacters]="false"
+                        [type]="borrower.get('SSN').value.status === SensitiveDataFieldStatuses.visible ? 'text' : 'password'"
+                        formControlName="value"
+                        (change)="sensitiveFieldChanged(i, 'SSN')"
+                        [readonly]="borrower.get('SSN').value.status !== SensitiveDataFieldStatuses.visible || !permissionSensitiveDataWrite"
+                      >
+                      <button
+                        type="button"
+                        matSuffix
+                        mat-icon-button
+                        (click)="toggleBorrowerSensitiveData(borrower.value.Id, i, 'SSN')"
+                        [ngClass]="{'hidden':  borrower.get('SSN').value.status === SensitiveDataFieldStatuses.loading}"
+                        [disabled]="isSensitiveFieldToggleButtonDisabled(borrower.value.Id, borrower.get('SSN').value.value)"
+                      >
+                        <mat-icon>
+                          {{borrower.get("SSN").value.status === SensitiveDataFieldStatuses.hidden ? 'visibility': 'visibility_off'}}
+                        </mat-icon>
+                      </button>
+                      <mat-spinner
+                        matSuffix
+                        [diameter]="20"
+                        [ngClass]='{"hidden":  borrower.get("SSN").value.status !== SensitiveDataFieldStatuses.loading}'
+                      ></mat-spinner>
+                      <mat-error *ngIf="borrower.get('SSN.value').hasError('pattern')">Enter valid format e.g. 123-11-1234</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input matInput placeholder="Email" formControlName="Email">
+                    <mat-error *ngIf="borrower.get('Email').hasError('pattern')">Please enter valid email address</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input matInput [mask]="phoneMask" [dropSpecialCharacters]="false" placeholder="Cell Phone" formControlName="CellPhone">
+                    <mat-error *ngIf="borrower.get('CellPhone').hasError('pattern')">Please enter a valid phone number.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input matInput [mask]="phoneMask" [dropSpecialCharacters]="false" placeholder="Office Phone" formControlName="WorkPhone">
+                    <mat-error *ngIf="borrower.get('WorkPhone').hasError('pattern')">Please enter a valid phone number.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input matInput [mask]="phoneMask" [dropSpecialCharacters]="false" placeholder="Fax" formControlName="Fax">
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <mat-select placeholder="Marital Status" formControlName="IsMarried">
+                      <mat-option *ngFor="let martialStatus of martialStatuses" [value]="martialStatus.value">
+                        {{ martialStatus.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field formGroupName="DayOfBirth">
+                    <mat-datepicker-toggle
+                      matPrefix
+                      [for]="birthDatePicker"
+                      [ngClass]="{'hidden': borrower.get('DayOfBirth').value.status !== SensitiveDataFieldStatuses.visible}"
+                      [disabled]="!permissionSensitiveDataWrite || isViewMode">
+                    </mat-datepicker-toggle>
+                    <input
+                      matInput
+                      [matDatepicker]="birthDatePicker"
+                      placeholder="Birth Date"
+                      formControlName="value"
+                      (dateChange)="dayOfBirthChanged(i, 'DayOfBirth', borrower.get('DayOfBirth.value'), $event)"
+                      (change)="dayOfBirthChanged(i, 'DayOfBirth', borrower.get('DayOfBirth.value'), $event)"
+                      [type]="borrower.get('DayOfBirth').value.status === SensitiveDataFieldStatuses.visible ? 'text' : 'password'"
+                      [readonly]="borrower.get('DayOfBirth').value.status !== SensitiveDataFieldStatuses.visible || !permissionSensitiveDataWrite"
+                      >
+                    <button
+                      type="button"
+                      matSuffix
+                      mat-icon-button
+                      (click)="clearDayOfBirth(i, borrower.get('DayOfBirth.value'))"
+                      *ngIf="borrower.get('DayOfBirth.value').value && !isViewMode"
+                      [ngClass]="{'hidden': borrower.get('DayOfBirth').value.status !== SensitiveDataFieldStatuses.visible}"
+                    >
+                      <mat-icon>clear</mat-icon>
+                    </button>
+                    <mat-datepicker
+                      #birthDatePicker
+                      [ngClass]="{'hidden': borrower.get('DayOfBirth').value.status !== SensitiveDataFieldStatuses.visible}">
+                    </mat-datepicker>
+                    <mat-error *ngIf="borrower.get('DayOfBirth.value').hasError('matDatepickerParse')">
+                      Enter valid date e.g. mm/dd/yyyy
+                    </mat-error>
+                    <button
+                      type="button"
+                      matSuffix
+                      mat-icon-button
+                      (click)="toggleBorrowerSensitiveData(borrower.value.Id, i, 'DayOfBirth')"
+                      [ngClass]='{"hidden":  borrower.get("DayOfBirth").value.status === SensitiveDataFieldStatuses.loading}'
+                      [disabled]="isSensitiveFieldToggleButtonDisabled(borrower.value.Id, borrower.get('DayOfBirth').value.value)"
+                    >
+                    <mat-icon>
+                      {{borrower.get("DayOfBirth").value.status === SensitiveDataFieldStatuses.hidden ? 'visibility': 'visibility_off'}}
+                    </mat-icon>
+                    </button>
+                    <mat-spinner
+                      matSuffix
+                      [diameter]="20"
+                      [ngClass]='{"hidden":  borrower.get("DayOfBirth").value.status !== SensitiveDataFieldStatuses.loading}'
+                    ></mat-spinner>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="isCommercialBorrowerActive" >
+          <div formArrayName="CommercialBorrowers"
+               *ngFor="let borrower of CommercialBorrowersFormArray.controls; let i = index;">
+            <div class="row" [formGroupName]="i">
+              <div class="col">
+                <div class="form-group-title">
+                  <h4>Commercial Entity Borrower</h4>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Entity Name"
+                      formControlName="EntityName"
+                      required>
+                    <mat-error *ngIf="borrower.get('EntityName').hasError('required')">Entity Name is required</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width custom-error">
+                    <div class="mat-form-field">
+                      <mat-form-field
+                        formGroupName="TaxIdNumber">
+                        <input
+                          matInput
+                          placeholder="Tax Id"
+                          [type]="borrower.get('TaxIdNumber').value.status === SensitiveDataFieldStatuses.visible ? 'text' : 'password'"
+                          formControlName="value"
+                          (change)="sensitiveFieldChanged(i, 'TaxIdNumber')"
+                          [mask]="taxIdMask"
+                          [readonly]="borrower.get('TaxIdNumber').value.status !== SensitiveDataFieldStatuses.visible || !permissionSensitiveDataWrite"
+                          required
+                        >
+                        <button
+                          type="button"
+                          matSuffix
+                          mat-icon-button
+                          (click)="toggleBorrowerSensitiveData(borrower.value.Id, i, 'TaxIdNumber')"
+                          [ngClass]='{"hidden":  borrower.get("TaxIdNumber").value.status === SensitiveDataFieldStatuses.loading}'
+                          [disabled]="isSensitiveFieldToggleButtonDisabled(borrower.value.Id, borrower.get('TaxIdNumber').value.value)"                        >
+                          <mat-icon>
+                            {{borrower.get("TaxIdNumber").value.status === SensitiveDataFieldStatuses.hidden ? 'visibility': 'visibility_off'}}
+                          </mat-icon>
+                        </button>
+                        <mat-spinner
+                          matSuffix
+                          [diameter]="20"
+                          [ngClass]='{"hidden":  borrower.get("TaxIdNumber").value.status !== SensitiveDataFieldStatuses.loading}'
+                        ></mat-spinner>
+                      </mat-form-field>
+
+                      <div class="mat-form-field-subscript-wrapper">
+                        <mat-error *ngIf="!borrower.get('TaxIdNumber').get('value').hasError('required') && borrower.get('TaxIdNumber').get('value').hasError('pattern')">Enter valid format e.g. 12-3456789</mat-error>
+                      </div>
+                    </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group-title">
+                  <h4>Authorized Signor</h4>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="First Name"
+                      formControlName="FirstName"
+                      required>
+                    <mat-error *ngIf="borrower.get('FirstName').hasError('required')">First Name is required</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Middle Name"
+                      formControlName="MiddleName">
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Last Name"
+                      formControlName="LastName"
+                      required>
+                    <mat-error *ngIf="borrower.get('LastName').hasError('required')">Last Name is required</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Title"
+                      formControlName="Title"
+                      required>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Email"
+                      formControlName="Email">
+                    <mat-error *ngIf="borrower.get('Email').hasError('pattern')">Please enter valid email address</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      [mask]="phoneMask"
+                      [dropSpecialCharacters]="false"
+                      placeholder="Cell Phone"
+                      formControlName="CellPhone">
+                      <mat-error *ngIf="borrower.get('CellPhone').hasError('pattern')">Please enter a valid phone number.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      [mask]="phoneMask"
+                      [dropSpecialCharacters]="false"
+                      placeholder="Office Phone"
+                      formControlName="WorkPhone">
+                      <mat-error *ngIf="borrower.get('WorkPhone').hasError('pattern')">Please enter a valid phone number.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="form-row full-width">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      [mask]="phoneMask"
+                      [dropSpecialCharacters]="false"
+                      placeholder="Fax"
+                      formControlName="Fax">
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="footer" *ngIf="permissionOpportunitiesWrite && !initialValues">
+        <button mat-raised-button type="button" (click)="resetFormHandler()">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="opportunityForm.pristine" cdkFocusInitial>{{initialValues ? "Save" : "Create"}}</button>
+      </div>
+    </div>
+  </form>
+</div>

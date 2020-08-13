@@ -1,0 +1,21 @@
+<div class="contacts">
+  <app-full-search
+    class="search"
+    [headerCols]="headerCols"
+    [data]="contacts"
+    [totalLength]="contactsTotalLength"
+    (getData)="getContacts($event)"
+    (selectItem)="selectContact($event)"
+    [isLoading]="isLoadingContacts"
+    [title]="'Find Contacts'"
+    >
+    <div class="controls">
+      <button mat-icon-button color="primary" matTooltip="Create New Contact" (click)="openCreateDialog()" type="button" *ngIf="permissionContactsCreate">
+        <mat-icon>group_add</mat-icon>
+      </button>
+    </div>
+  </app-full-search>
+  <div class="contacts-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

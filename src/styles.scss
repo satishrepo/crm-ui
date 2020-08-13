@@ -1,0 +1,35 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~saturn-datepicker/bundle.css';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+*::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+*::-webkit-scrollbar-track {
+-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+*::-webkit-scrollbar-thumb {
+background-color: darkgrey;
+outline: 1px solid slategrey;
+}
+
+.blue-snackbar {
+  background: #3F51B5;
+}
+
+.red-snackbar {
+  background: #F44336;
+  .mat-simple-snackbar-action {
+    color: white !important;
+  }
+}
+
+.clear-snackbar.clear-snackbar {
+  background-color: transparent;
+  padding: 0;
+}

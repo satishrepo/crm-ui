@@ -1,0 +1,26 @@
+.contact-dashboard {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .selected-contact {
+    max-width: 40vw;
+    width: 100%;
+    margin-right: 10px;
+    display: block;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+  .lead-related-items {
+    margin-left: 10px;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .dashboard-module {
+    display: block;
+    margin-bottom: 20px;
+  }
+}

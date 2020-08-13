@@ -1,0 +1,42 @@
+<div class="filter">
+  <mat-form-field class="period-input">
+    <input
+      matInput
+      placeholder="Choose a period"
+      [satDatepicker]="picker"
+      [formControl]="filterPeriod"
+      (dateChange)="formatDateValue($event)"
+      required
+    />
+    <sat-datepicker
+      #picker
+      [rangeMode]="true"
+      [closeAfterSelection]="false"
+      [selectFirstDateOnClose]="true"
+      (closed)="fetchHistory()">
+    </sat-datepicker>
+    <sat-datepicker-toggle matPrefix [for]="picker"></sat-datepicker-toggle>
+  </mat-form-field>
+</div>
+<div class="table-container">
+  <app-loader [isLoading]="isLoading"></app-loader>
+  <mat-virtual-table [ngClass]="{ 'hidden': historyData.length === 0 }" [rows]="historyData" [columnsDef]="headerCols" [isResizable]="false">
+    <ng-template pCellDef column="LastUpdate" let-row="row">
+      {{ row.LastUpdate | date: 'short' }}
+    </ng-template>
+
+    <ng-template pCellDef column="PreviousValue" let-row="row">
+      <span [matTooltip]="row.PreviousValue" matTooltipClass="wrapped">{{ row.PreviousValue }}</span>
+    </ng-template>
+
+    <ng-template pCellDef column="NewValue" let-row="row">
+      <span [matTooltip]="row.NewValue" matTooltipClass="wrapped">{{ row.NewValue }}</span>
+    </ng-template>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </mat-virtual-table>
+  <div class="no-data-message" *ngIf="!historyData.length">
+    No Data Found
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="opportunity-dashboard">
+  <mat-card class="selected-opportunity dashboard-module">
+      <div class="mat-title">
+          Opportunity #{{opportunity?.OpportunityNumber}}
+        </div>
+      <mat-tab-group animationDuration="0ms">
+          <mat-tab label="Details">
+            <app-opportunity-details-form
+              [dictionaries]="dictionaries"
+              [opportunity]="opportunity"
+            >
+           </app-opportunity-details-form>
+          </mat-tab>
+          <mat-tab label="Contacts" *ngIf="permissionContactsRead">
+            <app-loader [isLoading]="isLoadingContact || isLoading"></app-loader>
+            <div class="related-contacts-header">
+              <div class="controls">
+                <button mat-icon-button color="primary" matTooltip="Create new Primary Contact" (click)="createContact()" type="button" *ngIf="permissionOpportunitiesWrite && permissionContactsWrite">
+                  <mat-icon>group_add</mat-icon>
+                </button>
+              </div>
+              <div class="mat-title">
+                Primary Contact
+              </div>
+            </div>
+
+            <div class="primary-contact">
+              <app-primary-contact *ngIf="opportunity" [contact]="primaryContact"></app-primary-contact>
+            </div>
+
+            <app-lead-related-contacts *ngIf="opportunity" [leadId]="opportunity.LeadId" (rowClick)="permissionOpportunitiesWrite ? markContactAsPrimary($event) : undefined">
+              <div class="mat-body table-instruction">
+                Record Contacts
+              </div>
+              {{opportunity}}
+            </app-lead-related-contacts>
+          </mat-tab>
+          <mat-tab label="History">
+            <ng-template matTabContent>
+              <app-history [opportunityId]="opportunity?.Id"></app-history>
+            </ng-template>
+          </mat-tab>
+        </mat-tab-group>
+  </mat-card>
+  <div class="lead-related-items" *ngIf="opportunity">
+    <app-lead-opportunities-details
+      [selectedOpportunityId]="selectedOpportunityId"
+      class="dashboard-module"
+      [leadId]="opportunity.Lead.Id"
+      *ngIf="permissionPropertiesRead"
+    ></app-lead-opportunities-details>
+    <app-lead-campaigns-details
+      class="dashboard-module"
+      [leadId]="opportunity.Lead.Id"
+      *ngIf="permissionCampaignsRead"
+    ></app-lead-campaigns-details>
+    <mat-card class="property-data-details" *ngIf="permissionRecordsCommentsRead">
+        <mat-card-content>
+            <app-comments
+              [comments]="opportunityComments"
+              (addComment)="addComment($event)"
+              (fetchComments)="getComments($event)" [isLoading]="isLoadingComments"
+              [commentsWriteEnabled]="permissionRecordsCommentsWrite"
+              [editableComments]="permissionRecordsCommentsWrite"
+              [deletableComments]="permissionRecordsCommentsWrite"
+              [saveComment]="saveComment"
+              [deleteComment]="deleteComment"
+            ></app-comments>
+        </mat-card-content>
+    </mat-card>
+  </div>
+</div>

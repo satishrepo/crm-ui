@@ -1,0 +1,7 @@
+
+<div class="properties">
+    <app-full-search class="search" [headerCols]="headerCols" [data]="properties" [totalLength]="propertiesLength" (getData)="getProperties($event)" (selectItem)="selectOpportunity($event)" [isLoading]="isLoadingProperties" title="Find Properties"></app-full-search>
+    <div class="properties-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

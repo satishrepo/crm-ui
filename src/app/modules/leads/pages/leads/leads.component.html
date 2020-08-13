@@ -1,0 +1,7 @@
+<div class="leads">
+    <app-full-search class="search" [headerCols]="headerCols" [data]="leads" [totalLength]="leadsLength" (getData)="getLeads($event)" (selectItem)="selectLead($event)" [isLoading]="isLoadingLeads" [title]="'Find Records'"></app-full-search>
+    <div class="leads-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>
+      

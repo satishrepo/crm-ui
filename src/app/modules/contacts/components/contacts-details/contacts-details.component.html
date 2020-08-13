@@ -1,0 +1,39 @@
+<div class="contact-dashboard">
+  <mat-card class="selected-contact dashboard-module">
+    <app-contacts-form
+      [contactId]="selectedContactId"
+      (setLeadId)="setLeadId($event)"
+    ></app-contacts-form>
+  </mat-card>
+  <div class="lead-related-items" *ngIf="leadId">
+    <mat-card class="dashboard-module">
+      <mat-card-header>
+        <mat-card-title>Related Contacts</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <app-lead-related-contacts
+          [selectedContactId]="selectedContactId"
+          [leadId]="leadId"
+          (rowClick)="goToContactPage($event)"
+        ></app-lead-related-contacts>
+      </mat-card-content>
+    </mat-card>
+    <app-lead-opportunities-details class="dashboard-module" [leadId]="leadId" *ngIf="permissionOpportunitiesRead"></app-lead-opportunities-details>
+    <mat-card class="property-data-details" *ngIf="permissionRecordsCommentsRead">
+      <mat-card-content>
+          <app-comments
+            [comments]="contactComments"
+            (addComment)="addComment($event)"
+            (fetchComments)="getComments($event)"
+            [isLoading]="isLoadingComments"
+            [commentsWriteEnabled]="permissionRecordsCommentsWrite"
+            [editableComments]="permissionRecordsCommentsWrite"
+            [deletableComments]="permissionRecordsCommentsWrite"
+            [saveComment]="saveComment"
+            [deleteComment]="deleteComment"
+          ></app-comments>
+      </mat-card-content>
+  </mat-card>
+  </div>
+</div>
+

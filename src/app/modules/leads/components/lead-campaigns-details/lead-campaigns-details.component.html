@@ -1,0 +1,43 @@
+<mat-card class="lead-data-details">
+    <div class="loader-shade"
+      *ngIf="isLoadingCampaigns">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+    <mat-card-header>
+        <mat-card-title>Related Campaigns</mat-card-title>
+        <mat-card-subtitle *ngIf="campaignsTotal === 0">No Campaigns Found</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- CAMPAIGNS RESULTS TABLE -->
+      <div class="table-container" *ngIf="campaignsTotal">
+          <table
+            mat-table
+            [dataSource]="data">
+            <ng-container *ngFor="let col of headerCols;">
+              <ng-container [matColumnDef]="col.field">
+                <th mat-header-cell *matHeaderCellDef> {{col.title}} </th>
+                <td mat-cell *matCellDef="let element">
+                  <span *ngIf="element.hasOwnProperty(col.field)">
+                    <span *ngIf="element[col.field]?.hasOwnProperty('Name')">
+                        {{element[col.field].Name}}
+                    </span>
+                    <span *ngIf="!element[col.field]?.hasOwnProperty('Name')">
+                        <span *ngIf="col.type && col.type === 'currency'">{{element[col.field] | currency}}</span>
+                        <span *ngIf="col.type && col.type === 'date'">{{element[col.field] | date}}</span>
+                        <span *ngIf="!col.type">{{element[col.field]}}</span>
+                    </span>
+                  </span>
+                </td>
+              </ng-container>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+            <tr class="pointer" mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)"></tr>
+          </table>
+        </div>
+      <!-- /CAMPAIGNS RESULTS TABLE -->
+    </mat-card-content>
+    <mat-card-actions>
+        <button [disabled]="campaignsTotal < 3" mat-button (click)="openFullDetailsDialog()">VIEW ALL</button>
+    </mat-card-actions>
+</mat-card>

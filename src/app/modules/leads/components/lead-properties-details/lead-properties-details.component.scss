@@ -1,0 +1,35 @@
+.table-container{
+    width: 100%;
+    table-layout: fixed;
+}
+table{
+    width: 100%;
+}
+.loader-shade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.aggregation-fields{
+    display: flex; 
+    justify-content: flex-end; 
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.mat-header-cell, .mat-cell {
+    padding: 8px 8px 8px 0;
+    &:first-of-type{
+        padding-left: 0;
+    }
+}
+.detail-input:disabled{
+    color: black;
+}
+    

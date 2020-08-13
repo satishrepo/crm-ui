@@ -1,0 +1,34 @@
+.camp-details-form-wrapper {
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: flex-start;
+  }
+  .select-records {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    .select-record-btn {
+      margin-bottom: 24px;
+    }
+  }
+}
+
+.mat-input-element[disabled] {
+  color: #000;
+}
+
+::ng-deep {
+  .mat-select-disabled .mat-select-value,
+  .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after, .mat-input-element:disabled {
+    color: #000;
+  }
+}
+
+.deactivated-beige{
+  color: #f44336;
+}

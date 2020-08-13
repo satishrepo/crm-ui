@@ -1,0 +1,60 @@
+.create-rule-wrapper {
+  .controls-container {
+    margin-bottom: 14px;
+  }
+  .controls-container, .controls-button-block {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: flex-start;
+    align-items: center;
+    .rule-name-field {
+      display: inline-block;
+      margin-right: 50px;
+    }
+  }
+  ::ng-deep .mat-dialog-content {
+    max-height: 55vh;
+  }
+  .rule-creation-table {
+    table {
+      width: 100%;
+      .checkbox-wrpr {
+        padding-right: 10px;
+      }
+      @media screen and (max-width: 1080px) {
+        .name-wrppr {
+          width: 30vw;
+        }
+        .logic-wrppr {
+          margin-right: 10px;
+        }
+        ::ng-deep .mat-form-field-infix  {
+          width: 15vw;
+        }
+      }
+
+    }
+  }
+}
+
+.form-field {
+  position: relative;
+}
+
+.controls-button-block {
+  position: relative;
+  padding-top: 30px;
+  .mat-form-field-subscript-wrapper {
+    top: 0;
+  }
+}
+.rule-name {
+  .mat-checkbox-layout {
+    ::ng-deep & {
+      white-space: normal;
+      word-break: break-word;
+    }
+  }
+}

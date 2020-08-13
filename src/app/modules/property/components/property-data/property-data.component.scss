@@ -1,0 +1,49 @@
+.property-data-details{
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.property-details-tab-content{
+    padding: 20px 10px 0;
+
+    .details-group{
+        padding: 10px 0;
+        &:first-child{
+            padding-top: 0;
+        }
+        &:last-child{
+            padding-bottom: 0;
+        }
+    }
+}
+.detail-input:disabled{
+    color: black;
+}
+.fields-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    mat-form-field{
+        padding: 0 10px;
+    }
+}
+
+table{
+    width: 100%;
+
+    td.mat-footer-cell{
+        border: none;
+    }
+}
+.contacts-wrapper{
+    margin-bottom: 10px;
+}
+
+::ng-deep {
+  .mat-select-disabled .mat-select-value,
+  .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after, .mat-input-element:disabled {
+    color: rgba(0,0,0, 0.87);
+  }
+}

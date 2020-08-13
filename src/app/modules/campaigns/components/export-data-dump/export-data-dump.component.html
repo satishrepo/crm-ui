@@ -1,0 +1,39 @@
+<div class="root">
+  <app-loader [isLoading]="isLoading"></app-loader>
+  <div class="data-export-title" mat-dialog-title>Export Data Set</div>
+  <div class="toggle-view" *ngIf="!noExportData">
+    <div class="radio-group-wrppr">
+      <mat-radio-group [(ngModel)]="dataView" (change)="dataViewChange()">
+        <div class="record-view">
+          <mat-radio-button value="Lead">Campaign data (Record view)</mat-radio-button>
+        </div>
+        <div class="property-view">
+          <mat-radio-button value="Property">Campaign data (Property view)</mat-radio-button>
+        </div>
+      </mat-radio-group>
+    </div>
+    <div class="check-box">
+      <mat-checkbox [(ngModel)]="selectAll" (change)="toggleSelectAll()">{{selectAll? 'Unselect All': 'Select All'}}</mat-checkbox>
+    </div>
+  </div>
+  <div class="data-export-content" mat-dialog-content>
+    <div *ngIf="!noExportData">
+      <div cdkDropList class="items-list" *ngIf="eventFields.length" (cdkDropListDropped)="drop($event)">
+        <div class="items-box {{item.Key}}" *ngFor="let item of eventFields" cdkDrag>
+          <div class="icon"><mat-icon>reorder</mat-icon></div>
+          <div class="checkbox"><mat-checkbox #dumbCheckbox (change)="check($event, item)" ></mat-checkbox></div>
+
+          <mat-form-field class="input-field">
+            <input matInput (input)="inputChange($event, item)" [value]="item.Alias">
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="noExportData || !eventFields.length && !isLoading">No Records Found</div>
+  </div>
+
+  <div class="data-export-btns" mat-dialog-actions >
+    <button mat-raised-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="isLoading || noExportData || !dataArr.length" (click)="exportData()">Export Data</button>
+  </div>
+</div>

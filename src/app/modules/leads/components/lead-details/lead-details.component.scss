@@ -1,0 +1,67 @@
+.leads-details {
+    justify-content: start;
+    display: flex;
+    flex-direction: row;
+    margin: 0 -10px;
+    @media screen and (min-width: 1081px) {
+      .col1 {
+        width: 55%;
+      }
+      .col2 {
+        width: 45%;
+      }
+    }
+    @media screen and (max-width: 1080px) {
+      flex-direction: column;
+    }
+    .new-opportunity-btn {
+      padding: 20px 0 0 0;
+      color: #3F51B5;
+    }
+}
+.leads-details-module {
+  margin: 10px;
+  display: block;
+  &:first-child {
+    margin-top: 0;
+  }
+}
+.lead-details-tab-content{
+    padding: 20px 10px 0;
+}
+.detail-input:disabled{
+    color: black;
+}
+.fields-row{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    mat-form-field {
+        input {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+.checkbox-form-field{
+  padding: 11px 0px;
+
+  .mat-checkbox {
+    display: inline-block;
+    width: 180px;
+  }
+}
+
+.contacts-wrapper{
+    margin-bottom: 5px;
+}
+
+.related-contacts-header {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: flex-start;
+}

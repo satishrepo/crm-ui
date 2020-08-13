@@ -1,0 +1,171 @@
+<div class="camp-details-form-wrapper">
+    <form [formGroup]="campaignForm">
+      <!-- Name -->
+      <mat-form-field >
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="Name" required>
+        <mat-error *ngIf="Name.hasError('required')">
+          Name is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Type -->
+      <mat-form-field >
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="Type" (valueChange)="typeChange($event)" required>
+          <ng-container *ngIf="campaignTypes?.length">
+            <mat-option *ngFor="let type of campaignTypes" [value]="type.Id">{{type.Name}}</mat-option>
+          </ng-container>
+        </mat-select>
+        <mat-error *ngIf="Type.hasError('required')">
+            Type is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- SubType -->
+      <mat-form-field >
+        <mat-label>Sub Type</mat-label>
+        <mat-select formControlName="SubType" required>
+          <ng-container *ngIf="campaignTypes?.length">
+            <mat-option *ngFor="let type of campaignSubTypes" [value]="type.Id">{{type.Name}}</mat-option>
+          </ng-container>
+        </mat-select>
+        <mat-error *ngIf="SubType.hasError('required')">
+            Sub Type is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Create Date -->
+      <mat-form-field *ngIf="initialValues">
+        <mat-label>Create Date</mat-label>
+          <input matInput  [matDatepicker]="createDatePicker"
+                (dateChange)="formatDateValue('CreateDate', $event)"
+                 formControlName="CreateDate"
+                 readonly>
+          <mat-datepicker #createDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Target Date -->
+      <mat-form-field >
+        <mat-datepicker-toggle matPrefix [for]="targetDatePicker"></mat-datepicker-toggle>
+        <input
+          matInput
+          placeholder="Target Date"
+          formControlName="TargetDate"
+          [matDatepicker]="targetDatePicker"
+          (dateChange)="formatDateValue('TargetDate', $event)"
+          (change)="formatDateValue('TargetDate', $event)"
+          required
+        >
+        <button matSuffix mat-icon-button
+          (click)="TargetDate.setValue('')" *ngIf="TargetDate.value && !editDisable" >
+        <mat-icon>clear</mat-icon>
+        </button>
+        <mat-datepicker #targetDatePicker></mat-datepicker>
+        <mat-error *ngIf="!TargetDate.hasError('matDatepickerParse') && TargetDate.hasError('required')">
+            Target Date is required
+        </mat-error>
+        <mat-error *ngIf="TargetDate.hasError('matDatepickerParse')">
+          Enter valid date e.g. mm/dd/yyyy
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="State"
+          [matAutocomplete]="stateAuto"
+          formControlName="State"
+          (blur)="setState()"
+          required
+        >
+        <mat-autocomplete #stateAuto="matAutocomplete" [displayWith]="displayFastEntity">
+          <mat-option *ngFor="let state of filteredStates" [value]="state">
+            {{ state.Name }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="State.hasError('required')">
+          State is required
+        </mat-error>
+        <mat-error *ngIf="State.hasError('stateNotInTheList')">Please enter correct name or pick from the list</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+          <mat-spinner matSuffix [diameter]="20" *ngIf="isLoadingCountyOptions"></mat-spinner>
+          <mat-chip-list #chipList >
+            <mat-chip
+              *ngFor="let county of selectedCounties"
+              [selectable]="!editDisable"
+              [removable]="!editDisable"
+              (removed)="removeCounty(county)">
+              {{county.Name}}
+              <mat-icon matChipRemove *ngIf="!editDisable">cancel</mat-icon>
+            </mat-chip>
+            <input
+              matInput
+              placeholder="County"
+              #countyInput
+              [formControl]="County"
+              [matAutocomplete]="autoCounty"
+              [matChipInputFor]="chipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [readonly]="this.State.invalid"
+              [disabled]="editDisable || this.State.invalid"/>
+          </mat-chip-list>
+          <mat-autocomplete #autoCounty="matAutocomplete" (optionSelected)="selectCounty($event)">
+            <mat-option *ngFor="let county of countiesOptions" [value]="county">
+              {{county.Name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+      <!-- Note -->
+      <mat-form-field >
+        <mat-label>Note</mat-label>
+        <textarea matInput  formControlName="Note"></textarea>
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field >
+        <mat-label>Description</mat-label>
+        <textarea matInput  formControlName="Description"></textarea>
+      </mat-form-field>
+
+      <!-- Assignee -->
+      <mat-form-field >
+        <mat-label>Assignee</mat-label>
+        <mat-select formControlName="AssignedTo" required>
+          <ng-container *ngIf="users?.length">
+            <mat-option *ngFor="let user of users" [value]="user.Id">
+              {{user.Name}}
+              <span class="deactivated-beige" *ngIf="user.IsActive === false">(Deactivated)</span>
+              <span class="deactivated-beige" *ngIf="user.IsActive === true">(Not authorized)</span>
+            </mat-option>
+          </ng-container>
+        </mat-select>
+        <mat-error *ngIf="AssignedTo.hasError('required')">
+            Assignee is required
+        </mat-error>
+      </mat-form-field>
+    </form>
+    <div class="select-records" *ngIf="initialValues">
+      <!-- Select Records Button -->
+      <div class="select-record-btn">
+        <button [disabled]="editDisable" mat-raised-button
+          (click)="openSelectRecordsDialog()" color="primary">Select Records</button>
+      </div>
+
+      <!-- Total Records Included -->
+      <mat-form-field >
+        <mat-label>Total Records Included</mat-label>
+        <input matInput [value]="initialValues.TotalRecords" readonly>
+      </mat-form-field>
+
+      <!-- Total Amount of Records -->
+      <mat-form-field >
+        <span matPrefix>$ &nbsp;</span>
+        <mat-label>Total Amount of Records</mat-label>
+        <input matInput value="{{initialValues.TotalAmountRecords | number:'1.2-2' }}" readonly>
+      </mat-form-field>
+    </div>
+</div>

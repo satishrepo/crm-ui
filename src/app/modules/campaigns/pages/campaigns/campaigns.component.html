@@ -1,0 +1,17 @@
+<div class="campaigns-wrapper">
+  <div class="campaigns">
+      <app-full-search [headerCols]="headerCols" [data]="campaigns" [totalLength]="campaignsLength"
+                        (getData)="getCampaigns($event)" (selectItem)="selectCampaign($event)"
+                        [isLoading]="isLoadingCampaigns" [title]="'Find Campaigns'"
+                        class="search" >
+        <div class="controls">
+          <button mat-icon-button color="primary" matTooltip="Create New Campaign" (click)="openNewCampaignDialog()" type="button" *ngIf="permissionCampaignsCreate">
+            <mat-icon>note_add</mat-icon>
+          </button>
+        </div>
+      </app-full-search>
+    </div>
+    <div class="campaign-details">
+      <router-outlet></router-outlet>
+    </div>
+</div>

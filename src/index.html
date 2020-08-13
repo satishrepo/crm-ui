@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Crm</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script>
+    if (location.hash.length) {
+      history.pushState({}, "entry page", location.hash.substring(1));
+    }
+    if (!sessionStorage.length) {
+      localStorage.setItem('getSessionStorage', Date.now());
+    };
+
+    window.addEventListener('storage', function(event) {
+
+      if (event.key == 'getSessionStorage') {
+        localStorage.setItem('sessionStorage', JSON.stringify(sessionStorage));
+        localStorage.removeItem('sessionStorage');
+
+      } else if (event.key == 'sessionStorage') {
+        var data = JSON.parse(event.newValue);
+
+        for (key in data) {
+          sessionStorage.setItem(key, data[key]);
+        }
+      }
+    });
+  </script>
+  <script>document.write("<script type='text/javascript' src='config.js?" + Date.now() + "'><\/script>");</script>
+</head>
+<body class="mat-app-background">
+  <app-root></app-root>
+</body>
+</html>

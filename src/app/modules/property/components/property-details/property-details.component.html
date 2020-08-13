@@ -1,0 +1,29 @@
+<h3 *ngIf="property" class="record-account-name">{{property?.Lead.Name}}</h3>
+
+<div class="property-details">
+    <div class="col1">
+            <app-property-data [selectedProperty]="property"></app-property-data>
+            <mat-card class="property-data-details" *ngIf="permissionRecordsCommentsRead">
+                <mat-card-content>
+                    <app-comments
+                      [comments]="propertyComments"
+                      (addComment)="addComment($event)"
+                      (fetchComments)="getComments($event)"
+                      [isLoading]="isLoadingComments"
+                      [commentsWriteEnabled]="permissionRecordsCommentsWrite"
+                      [editableComments]="permissionRecordsCommentsWrite"
+                      [deletableComments]="permissionRecordsCommentsWrite"
+                      [saveComment]="saveComment"
+                      [deleteComment]="deleteComment"
+                    ></app-comments>
+                </mat-card-content>
+            </mat-card>
+    </div>
+    <div class="col2">
+        <app-lead-properties-details class="dashboard-module" [filterPropId]="property?.Id" [leadId]="property?.Lead.Id"></app-lead-properties-details>
+        <app-lead-opportunities-details class="dashboard-module" [leadId]="property?.Lead.Id" *ngIf="permissionOpportunitiesRead"></app-lead-opportunities-details>
+        <app-lead-campaigns-details class="dashboard-module" [leadId]="property?.Lead.Id" *ngIf="permissionCampaignsRead"></app-lead-campaigns-details>
+    </div>
+</div>
+
+

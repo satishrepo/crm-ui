@@ -1,0 +1,17 @@
+.primary-contact {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  &__field {
+    width: 50%;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .static-title {
+    margin-right: 10px;
+  }
+}

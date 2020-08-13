@@ -1,0 +1,93 @@
+<div class="leads-details">
+    <div class="col1">
+      <mat-card class="lead-data-details leads-details-module">
+        <mat-card-content>
+          <mat-tab-group animationDuration="0ms">
+            <mat-tab label="Record Data">
+              <div class="new-opportunity-btn">
+                  <button mat-button (click)="createOpportunityWithRecord()" *ngIf="permissionOpportunitiesCreate">
+                    <mat-icon >note_add</mat-icon>
+                    Create Opportunity</button>
+              </div>
+              <div class="lead-details-tab-content">
+                  <div class="fields-row">
+                      <mat-form-field>
+                          <mat-label>Account Name</mat-label>
+                          <input class="detail-input" [attr.title]="lead?.AccountName" matInput disabled value="{{lead?.AccountName}}">
+                      </mat-form-field>
+                      <mat-form-field>
+                          <mat-label>Mailing Address 1</mat-label>
+                          <input class="detail-input" [attr.title]="lead?.Address.Address1" matInput disabled value="{{lead?.Address.Address1}}">
+                      </mat-form-field>
+                      <mat-form-field>
+                          <mat-label>Mailing Address 2</mat-label>
+                          <input class="detail-input" [attr.title]="lead?.Address.Address2" matInput disabled value="{{lead?.Address.Address2}}">
+                      </mat-form-field>
+                      <mat-form-field>
+                          <mat-label>Mailing Address 3</mat-label>
+                          <input class="detail-input" [attr.title]="lead?.Address.Address3" matInput disabled value="{{lead?.Address.Address3}}">
+                      </mat-form-field>
+                      <mat-form-field>
+                          <mat-label>Mailing City</mat-label>
+                          <input class="detail-input" [attr.title]="lead?.Address.City" matInput disabled value="{{lead?.Address.City}}">
+                      </mat-form-field>
+                      <mat-form-field>
+                          <mat-label>Mailing State</mat-label>
+                          <input class="detail-input" [attr.title]="lead?.Address?.State?.Name" matInput disabled value="{{lead?.Address?.State?.Name}}">
+                      </mat-form-field>
+                      <mat-form-field>
+                          <mat-label>Mailing Zip Code</mat-label>
+                          <input class="detail-input" matInput disabled value="{{lead?.Address.Zip}}">
+                      </mat-form-field>
+                      <div class="checkbox-form-field">
+                          <mat-checkbox (click)="false" [ngModel]="lead?.DoNotContact">Do Not Contact</mat-checkbox>
+                      </div>
+                  </div>
+              </div>
+                  </mat-tab>
+                  <mat-tab label="Contact" *ngIf="permissionContactsRead">
+                      <div class="lead-details-tab-content">
+
+                        <div class="related-contacts-header">
+                          <div class="controls">
+                            <button mat-icon-button color="primary" matTooltip="Create New Contact" (click)="createContact()" type="button" *ngIf="permissionContactsWrite">
+                              <mat-icon>group_add</mat-icon>
+                            </button>
+                          </div>
+                          <div class="mat-subheading-2">
+                            Related Contacts
+                          </div>
+                        </div>
+
+                        <app-lead-related-contacts
+                          *ngIf="lead" [leadId]="lead?.Id"
+                          (rowClick)="goToContactPage($event)"
+                        ></app-lead-related-contacts>
+                      </div>
+                  </mat-tab>
+              </mat-tab-group>
+          </mat-card-content>
+      </mat-card>
+      <mat-card class="lead-data-details leads-details-module" *ngIf="permissionRecordsCommentsRead">
+          <mat-card-content>
+              <app-comments
+                [comments]="leadComments"
+                (addComment)="addComment($event)"
+                (fetchComments)="getComments($event)"
+                [isLoading]="isLoadingComments"
+                [commentsWriteEnabled]="permissionRecordsCommentsWrite"
+                [editableComments]="permissionRecordsCommentsWrite"
+                [deletableComments]="permissionRecordsCommentsWrite"
+                [saveComment]="saveComment"
+                [deleteComment]="deleteComment"
+              ></app-comments>
+          </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col2">
+        <app-lead-properties-details class="leads-details-module" [leadId]="lead?.Id" *ngIf="permissionPropertiesRead"></app-lead-properties-details>
+        <app-lead-opportunities-details class="leads-details-module" [leadId]="lead?.Id" *ngIf="permissionOpportunitiesRead"></app-lead-opportunities-details>
+        <app-lead-campaigns-details class="leads-details-module" [leadId]="lead?.Id" *ngIf="permissionCampaignsRead"></app-lead-campaigns-details>
+    </div>
+</div>
+

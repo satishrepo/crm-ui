@@ -1,0 +1,33 @@
+<div class="mat-body-1" *ngIf="!contact">Primary contact is not specified.</div>
+
+<div class="primary-contact" *ngIf="contact">
+  <div class="primary-contact__field" *ngIf="contact.FirstName">
+    <div class="mat-body-2 static-title">First Name:</div>
+    <div class="mat-body-1">{{contact?.FirstName}}</div>
+  </div>
+  <div class="primary-contact__field" *ngIf="contact.LastName">
+    <div class="mat-body-2 static-title">Last Name:</div>
+    <div class="mat-body-1">{{contact?.LastName}}</div>
+  </div>
+  <div class="primary-contact__field" *ngIf="contact?.Type">
+    <div class="mat-body-2 static-title">Contact Type: </div>
+    <div class="mat-body-1">{{contact?.Type}}</div>
+  </div>
+  <div class="primary-contact__field" *ngIf="contact?.CellPhone">
+    <div class="mat-body-2 static-title">Cell Phone: </div>
+    <div class="mat-body-1">{{contact?.CellPhone}}</div>
+  </div>
+  <div class="primary-contact__field" *ngIf="contact?.OfficePhone">
+    <div class="mat-body-2 static-title">Office Phone: </div>
+    <div class="mat-body-1">{{ contact?.OfficePhone}}</div>
+  </div>
+  <div class="primary-contact__field" *ngIf="contact?.Email">
+    <div class="mat-body-2 static-title">Email:</div>
+    <div class="mat-body-1">{{ contact?.Email }}</div>
+  </div>
+  <div class="primary-contact__field" *ngIf="contact?.Title">
+    <div class="mat-body-2 static-title">Title:</div>
+    <div class="mat-body-1">{{ contact?.Title }}</div>
+  </div>
+</div>
+
